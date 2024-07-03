@@ -11,5 +11,9 @@ export const setupSwagger = (app: INestApplication): void => {
   const document = SwaggerModule.createDocument(app, options, {
     ignoreGlobalPrefix: false,
   });
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      defaultModelsExpandDepth: -1,
+    },
+  });
 };

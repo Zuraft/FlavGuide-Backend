@@ -1,6 +1,6 @@
 import { HttpException } from '@nestjs/common';
 
-const ERROR = {
+const DEFAULT_ERROR = {
   INVALID_CREDENTIALS: new HttpException(
     '이메일 혹은 비밀번호가 틀렸습니다.',
     401,
@@ -13,4 +13,4 @@ const ERROR = {
   UNKNOWN: new HttpException('알 수 없는 오류입니다.', 500),
 };
 
-export default ERROR;
+export default DEFAULT_ERROR;
