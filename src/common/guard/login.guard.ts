@@ -14,11 +14,13 @@ export class LoginGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     try {
-      const accessToken = request.headers['authorization'];
+      let accessToken = request.headers['authorization'];
 
       if (!accessToken) {
         throw DEFAULT_ERROR.NEED_LOGIN;
       }
+
+      accessToken = accessToken.replace('Bearer ', '');
 
       const payload: AccessTokenPayload = this.jwtService.verify(accessToken, {
         secret: this.configService.get('JWT_ACCESS_SECRET'),
@@ -27,6 +29,7 @@ export class LoginGuard implements CanActivate {
       request.user = payload;
       return true;
     } catch (err) {
+      console.log(err);
       if (err.name === 'HttpException') {
         throw err;
       } else if (err.name === 'JsonWebTokenError') {

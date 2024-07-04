@@ -67,10 +67,12 @@ export class UserController {
         weight: user.weight,
         favoriteFood: user.favoriteFood,
         allergy: user.allergy,
-        group: {
-          id: user.group.id,
-          name: user.group.name,
-        },
+        group: user?.group
+          ? {
+              id: user.group.id,
+              name: user.group.name,
+            }
+          : null,
       },
     };
   }

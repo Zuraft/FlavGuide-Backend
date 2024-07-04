@@ -34,7 +34,7 @@ export class AuthService {
 
   async checkDuplicateLoginId(loginId: string): Promise<boolean> {
     const user = await this.userRepository.findOne({ where: { loginId } });
-    if (user) {
+    if (!user) {
       return true;
     } else {
       throw USER_ERROR.DUPLICATE_LOGIN_ID;

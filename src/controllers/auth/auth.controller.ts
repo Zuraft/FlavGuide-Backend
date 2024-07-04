@@ -72,14 +72,14 @@ export class AuthController {
       body.password,
     );
 
-    const accessToken = this.authService.generateAccessToken(user);
+    const accessToken = await this.authService.generateAccessToken(user);
 
     return {
       status: 200,
       ok: true,
       data: {
         id: user.id,
-        accessToken,
+        accessToken: accessToken,
       },
     };
   }
