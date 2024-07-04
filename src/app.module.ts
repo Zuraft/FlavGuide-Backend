@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import controllers from 'src/controllers';
 import entities from 'src/entities';
@@ -17,12 +18,12 @@ import services from 'src/services';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [],
+      entities: entities,
       synchronize: process?.env?.MODE === 'DEV' ? true : false,
     }),
     TypeOrmModule.forFeature(entities),
   ],
-  controllers: controllers,
-  providers: services,
+  controllers: [...controllers],
+  providers: [...services, JwtService],
 })
 export class AppModule {}

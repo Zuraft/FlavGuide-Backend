@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ResponseBody, WithToken } from 'src/common/type/base.type';
+import { ResponseBody, WithToken } from 'src/type/base.type';
 import { User } from 'src/entities/user.entity';
 
 export class RegisterRequest

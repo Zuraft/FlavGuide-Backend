@@ -11,7 +11,4 @@ export class ResponseBody {
 export class WithToken {
   @ApiProperty({ description: 'Access Token' })
   accessToken: string;
-
-  @ApiProperty({ description: 'Refresh Token' })
-  refreshToken: string;
 }

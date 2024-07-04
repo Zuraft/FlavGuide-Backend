@@ -1,11 +1,11 @@
-import { Controller, Delete, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Post } from '@nestjs/common';
 import {
   ApiBody,
   ApiCreatedResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { ResponseBody } from 'src/common/type/base.type';
+import { ResponseBody } from 'src/type/base.type';
 import {
   LoginRequest,
   LoginResponse,
@@ -14,11 +14,12 @@ import {
   RegisterRequest,
   RegisterResponse,
 } from 'src/controllers/auth/type/register.type';
+import { AuthService } from 'src/services/auth.service';
 
 @Controller('')
 @ApiTags('Auth')
 export class AuthController {
-  constructor() {}
+  constructor(private readonly authService: AuthService) {}
 
   @Post('/register')
   @ApiBody({
@@ -27,10 +28,25 @@ export class AuthController {
   @ApiCreatedResponse({
     description: '회원가입 성공',
     type: RegisterResponse,
+    example: {
+      ok: true,
+      status: 201,
+      data: {
+        id: 'uuid',
+      },
+    },
   })
   @ApiOperation({ summary: '회원가입' })
-  async register() {
-    return null;
+  async register(@Body() body: RegisterRequest) {
+    const userId = await this.authService.registerUser(body);
+
+    return {
+      status: 201,
+      ok: true,
+      data: {
+        id: userId,
+      },
+    };
   }
 
   @Post('/login')
@@ -40,29 +56,31 @@ export class AuthController {
   @ApiCreatedResponse({
     description: '로그인 성공',
     type: LoginResponse,
+    example: {
+      ok: true,
+      status: 200,
+      data: {
+        id: 'uuid',
+        accessToken: 'accessToken',
+      },
+    },
   })
   @ApiOperation({ summary: '로그인' })
-  async login() {
-    return null;
-  }
+  async login(@Body() body: LoginRequest) {
+    const user = await this.authService.validateUser(
+      body.loginId,
+      body.password,
+    );
 
-  @Post('/logout')
-  @ApiOperation({ summary: '로그아웃' })
-  @ApiCreatedResponse({
-    description: '로그아웃 성공',
-    type: ResponseBody,
-  })
-  async logout() {
-    return null;
-  }
+    const accessToken = this.authService.generateAccessToken(user);
 
-  @Delete('/withdraw')
-  @ApiOperation({ summary: '회원탈퇴' })
-  @ApiCreatedResponse({
-    description: '회원탈퇴 성공',
-    type: ResponseBody,
-  })
-  async withdraw() {
-    return null;
+    return {
+      status: 200,
+      ok: true,
+      data: {
+        id: user.id,
+        accessToken,
+      },
+    };
   }
 }

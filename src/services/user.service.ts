@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import DEFAULT_ERROR from 'src/common/error/default.error';
 import USER_ERROR from 'src/common/error/user.error';
+import { PutMyProfileRequest } from 'src/controllers/user/type/put-my-profile.type';
 import { DeletedUser } from 'src/entities/deleted-user.entity';
 import { User } from 'src/entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -17,7 +18,10 @@ export class UserService {
   ) {}
 
   async findByUUID(uuid: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: uuid } });
+    const user = await this.userRepository.findOne({
+      where: { id: uuid },
+      relations: ['group'],
+    });
     if (!user) {
       throw USER_ERROR.NOT_FOUND;
     }
@@ -25,17 +29,13 @@ export class UserService {
     return user;
   }
 
-  async checkLoginId(loginId: string): Promise<boolean> {
-    const user = await this.userRepository.findOne({ where: { loginId } });
-    return !!user;
-  }
-
-  async validateCredentials(loginId: string, password: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { loginId } });
-    if (!user || user.password !== password) {
-      throw DEFAULT_ERROR.INVALID_CREDENTIALS;
+  async update(uuid: string, body: PutMyProfileRequest): Promise<void> {
+    const user = await this.userRepository.findOne({ where: { id: uuid } });
+    if (!user) {
+      throw USER_ERROR.NOT_FOUND;
     }
-    return user;
+
+    await this.userRepository.update(user.id, body);
   }
 
   async delete(uuid: string): Promise<void> {
